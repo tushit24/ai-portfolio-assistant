@@ -399,7 +399,7 @@ function App() {
           <div
             style={{
               position: "absolute",
-              top: "137px",
+              top: "118px",
               left: "50%",
               transform: "translateX(-50%)",
               zIndex: 20,
