@@ -398,7 +398,7 @@ function App() {
         {isMobile && (
           <div
             style={{
-              marginTop: "6px",
+              marginTop: "5px",
               display: "flex",
               justifyContent: "center",
               zIndex: 20,
