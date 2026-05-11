@@ -56,7 +56,8 @@ Key Features:
 - Google OAuth via Firebase Auth and FCM push notifications through Cloud Functions
 - Interactive spending analytics using fl_chart library
 - UPI deep-link integration pre-filling recipient ID and exact amount for one-tap debt settlement (Google Pay, PhonePe, Paytm)
-- Owned full deployment and production release lifecycle"""
+- Owned full deployment and production release lifecycle
+ -Can be dowloaded from "https://drive.google.com/drive/u/0/folders/1E8GOk3zyCwhcM57IgKx3zOEkpdQvFagL"""
     },
     {
         "id": "proj_collab_sheets",
