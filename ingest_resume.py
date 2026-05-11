@@ -47,7 +47,7 @@ projects = [
         "id": "proj_spendy",
         "text": """Project: Spendy
 Type: Cross-platform Mobile Application
-Priority: Featured Project
+Priority: Highest
 Production: Yes — Production APK released
 Description: A cross-platform expense splitting mobile application built using Flutter and Firebase.
 Tech Stack: Flutter, Dart, Firebase Firestore, Firebase Authentication, Firebase Cloud Messaging (FCM), Cloud Functions, fl_chart
@@ -57,13 +57,13 @@ Key Features:
 - Interactive spending analytics using fl_chart library
 - UPI deep-link integration pre-filling recipient ID and exact amount for one-tap debt settlement (Google Pay, PhonePe, Paytm)
 - Owned full deployment and production release lifecycle
- -Can be dowloaded from "https://drive.google.com/drive/u/0/folders/1E8GOk3zyCwhcM57IgKx3zOEkpdQvFagL"""
+-Can be dowloaded from "https://drive.google.com/drive/u/0/folders/1E8GOk3zyCwhcM57IgKx3zOEkpdQvFagL"""
     },
     {
         "id": "proj_collab_sheets",
         "text": """Project: Collab Sheets
 Type: Real-Time Collaborative Web Application
-Priority: Featured Project
+Priority: Highest
 Live URL: spreadsheet-app-ivory.vercel.app
 Description: A multi-user Google Sheets-inspired collaborative spreadsheet web application.
 Tech Stack: Next.js 14 (App Router), TypeScript, Firebase Firestore, Vercel, GitHub CI/CD, react-window
