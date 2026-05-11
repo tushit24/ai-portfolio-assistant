@@ -30,7 +30,6 @@ function App() {
   const messagesContainerRef =
     useRef(null);
 
-  // RESPONSIVE
   const [isMobile, setIsMobile] =
     useState(
       window.innerWidth <= 768
@@ -78,7 +77,6 @@ function App() {
     }
   }, [messages, loading]);
 
-  // TYPEWRITER EFFECT
   const typeMessage = (
     fullText,
     callback
@@ -395,6 +393,40 @@ function App() {
             </a>
           )}
         </div>
+
+        {/* MOBILE RESUME BUTTON */}
+        {isMobile && (
+          <div
+            style={{
+              position: "absolute",
+              top: "92px",
+              left: "18px",
+              zIndex: 20,
+            }}
+          >
+            <a
+              href="/Tushit_Tiwari_ATS_Resume 106.pdf"
+              download
+              style={{
+                background: "#ffcc00",
+                color: "black",
+                padding: "10px 18px",
+                borderRadius: "14px",
+                textDecoration: "none",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "0.88rem",
+                boxShadow:
+                  "0 8px 30px rgba(255,204,0,0.25)",
+              }}
+            >
+              <FaDownload />
+              Resume
+            </a>
+          </div>
+        )}
       </div>
 
       {/* MAIN BODY */}
@@ -564,25 +596,28 @@ function App() {
             {/* RIGHT */}
             <div
               style={{
-                position:
-                  "relative",
+                position: "relative",
                 display: "flex",
                 justifyContent:
                   "center",
                 alignItems:
                   "center",
                 marginTop: isMobile
-                  ? "-30px"
+                  ? "10px"
                   : "0",
+                overflow: "visible",
+                minHeight: isMobile
+                  ? "480px"
+                  : "650px",
               }}
             >
               <div
                 style={{
                   width: isMobile
-                    ? "320px"
+                    ? "250px"
                     : "520px",
                   height: isMobile
-                    ? "320px"
+                    ? "250px"
                     : "520px",
                   borderRadius:
                     "50%",
@@ -590,6 +625,9 @@ function App() {
                     "#ffcc00",
                   position:
                     "absolute",
+                  opacity: 1,
+                  filter:
+                    "drop-shadow(0 0 80px rgba(255,204,0,0.28))",
                 }}
               />
 
@@ -598,17 +636,16 @@ function App() {
                 alt="Tushit"
                 style={{
                   width: isMobile
-                    ? "92vw"
+                    ? "340px"
                     : "510px",
-                  maxWidth:
-                    "510px",
+                  maxWidth: "100%",
                   objectFit:
                     "contain",
                   position:
                     "relative",
                   zIndex: 2,
                   top: isMobile
-                    ? "-40px"
+                    ? "30px"
                     : "-115px",
                   animation:
                     "fadeUp 1.2s ease 0.6s both, floating 4s ease-in-out infinite 1.8s",
@@ -721,133 +758,192 @@ function App() {
                         }}
                       >
                         <ReactMarkdown
-  components={{
-    p: ({ children }) => (
-      <p
-        style={{
-          lineHeight: 1.9,
-          marginBottom: "16px",
-          color: "white",
-          fontSize: isMobile
-            ? "0.96rem"
-            : "1rem",
-        }}
-      >
-        {children}
-      </p>
-    ),
+                          components={{
+                            p: ({
+                              children,
+                            }) => (
+                              <p
+                                style={{
+                                  lineHeight: 1.9,
+                                  marginBottom:
+                                    "16px",
+                                  color:
+                                    "white",
+                                  fontSize:
+                                    isMobile
+                                      ? "0.96rem"
+                                      : "1rem",
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </p>
+                            ),
 
-    h1: ({ children }) => (
-      <h1
-        style={{
-          color: "#ffcc00",
-          fontSize: isMobile
-            ? "1.4rem"
-            : "1.7rem",
-          marginBottom: "16px",
-          marginTop: "10px",
-          lineHeight: 1.3,
-        }}
-      >
-        {children}
-      </h1>
-    ),
+                            h1: ({
+                              children,
+                            }) => (
+                              <h1
+                                style={{
+                                  color:
+                                    "#ffcc00",
+                                  fontSize:
+                                    isMobile
+                                      ? "1.4rem"
+                                      : "1.7rem",
+                                  marginBottom:
+                                    "16px",
+                                  marginTop:
+                                    "10px",
+                                  lineHeight: 1.3,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </h1>
+                            ),
 
-    h2: ({ children }) => (
-      <h2
-        style={{
-          color: "#ffcc00",
-          fontSize: isMobile
-            ? "1.2rem"
-            : "1.45rem",
-          marginBottom: "14px",
-          marginTop: "10px",
-          lineHeight: 1.3,
-        }}
-      >
-        {children}
-      </h2>
-    ),
+                            h2: ({
+                              children,
+                            }) => (
+                              <h2
+                                style={{
+                                  color:
+                                    "#ffcc00",
+                                  fontSize:
+                                    isMobile
+                                      ? "1.2rem"
+                                      : "1.45rem",
+                                  marginBottom:
+                                    "14px",
+                                  marginTop:
+                                    "10px",
+                                  lineHeight: 1.3,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </h2>
+                            ),
 
-    h3: ({ children }) => (
-      <h3
-        style={{
-          color: "#ffcc00",
-          fontSize: isMobile
-            ? "1.05rem"
-            : "1.2rem",
-          marginBottom: "12px",
-          lineHeight: 1.3,
-        }}
-      >
-        {children}
-      </h3>
-    ),
+                            h3: ({
+                              children,
+                            }) => (
+                              <h3
+                                style={{
+                                  color:
+                                    "#ffcc00",
+                                  fontSize:
+                                    isMobile
+                                      ? "1.05rem"
+                                      : "1.2rem",
+                                  marginBottom:
+                                    "12px",
+                                  lineHeight: 1.3,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </h3>
+                            ),
 
-    ul: ({ children }) => (
-      <ul
-        style={{
-          paddingLeft: "24px",
-          marginBottom: "16px",
-          lineHeight: 1.9,
-        }}
-      >
-        {children}
-      </ul>
-    ),
+                            ul: ({
+                              children,
+                            }) => (
+                              <ul
+                                style={{
+                                  paddingLeft:
+                                    "24px",
+                                  marginBottom:
+                                    "16px",
+                                  lineHeight: 1.9,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </ul>
+                            ),
 
-    ol: ({ children }) => (
-      <ol
-        style={{
-          paddingLeft: "24px",
-          marginBottom: "16px",
-          lineHeight: 1.9,
-        }}
-      >
-        {children}
-      </ol>
-    ),
+                            ol: ({
+                              children,
+                            }) => (
+                              <ol
+                                style={{
+                                  paddingLeft:
+                                    "24px",
+                                  marginBottom:
+                                    "16px",
+                                  lineHeight: 1.9,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </ol>
+                            ),
 
-    li: ({ children }) => (
-      <li
-        style={{
-          marginBottom: "8px",
-        }}
-      >
-        {children}
-      </li>
-    ),
+                            li: ({
+                              children,
+                            }) => (
+                              <li
+                                style={{
+                                  marginBottom:
+                                    "8px",
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </li>
+                            ),
 
-    strong: ({ children }) => (
-      <strong
-        style={{
-          color: "#ffcc00",
-          fontWeight: 700,
-        }}
-      >
-        {children}
-      </strong>
-    ),
+                            strong: ({
+                              children,
+                            }) => (
+                              <strong
+                                style={{
+                                  color:
+                                    "#ffcc00",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </strong>
+                            ),
 
-    code: ({ children }) => (
-      <code
-        style={{
-          background: "#1a1a1a",
-          padding: "3px 8px",
-          borderRadius: "8px",
-          color: "#ffcc00",
-          fontSize: "0.92rem",
-        }}
-      >
-        {children}
-      </code>
-    ),
-  }}
->
-  {msg.text}
-</ReactMarkdown>
-                          
-                        
+                            code: ({
+                              children,
+                            }) => (
+                              <code
+                                style={{
+                                  background:
+                                    "#1a1a1a",
+                                  padding:
+                                    "3px 8px",
+                                  borderRadius:
+                                    "8px",
+                                  color:
+                                    "#ffcc00",
+                                  fontSize:
+                                    "0.92rem",
+                                }}
+                              >
+                                {
+                                  children
+                                }
+                              </code>
+                            ),
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   )}
