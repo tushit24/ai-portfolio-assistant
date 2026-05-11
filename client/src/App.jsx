@@ -354,10 +354,10 @@ function App() {
             style={{
               ...iconStyle,
               width: isMobile
-                ? "44px"
+                ? "40px"
                 : "58px",
               height: isMobile
-                ? "44px"
+                ? "40px"
                 : "58px",
               fontSize: isMobile
                 ? "1rem"
@@ -410,14 +410,14 @@ function App() {
               style={{
                 background: "#ffcc00",
                 color: "black",
-                padding: "10px 18px",
+                padding: "9px 15px",
                 borderRadius: "14px",
                 textDecoration: "none",
                 fontWeight: 700,
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
-                fontSize: "0.88rem",
+                fontSize: "0.82rem",
                 boxShadow:
                   "0 8px 30px rgba(255,204,0,0.25)",
               }}
@@ -549,7 +549,7 @@ function App() {
                       ? "center"
                       : "flex-start",
                   gap: isMobile
-                    ? "10px"
+                    ? "8px"
                     : "14px",
                   position:
                     "relative",
