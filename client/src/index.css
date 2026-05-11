@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f172a;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* Background */
+body {
+  margin: 0;
+  padding: 0;
+  background: #050505;
+  overflow-x: hidden;
+  font-family: Inter, sans-serif;
+}
+
+
+/* Floating animation */
+@keyframes float {
+
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+
+/* Fade animation */
+@keyframes fadeIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1.2s ease;
+}
+
+
+/* Badge glow */
+@keyframes pulseGlow {
+
+  0% {
+    box-shadow: 0 0 0px rgba(250, 204, 21, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.18);
+  }
+
+  100% {
+    box-shadow: 0 0 0px rgba(250, 204, 21, 0.1);
+  }
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+
+/* Nice scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #facc15;
+}

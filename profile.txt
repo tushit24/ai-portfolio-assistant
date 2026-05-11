@@ -1,0 +1,37 @@
+My name is Tushit Tiwari. I am a Computer Science and Engineering student specializing in E-Commerce Technology at VIT Bhopal University. I am currently in my third year of B.Tech and have a CGPA of 8.0.I am currently a student and early-career developer. Most of my experience comes from academic projects, internships, self-learning, research work, and hands-on personal development projects rather than full-time industry roles.
+
+I am passionate about software engineering, artificial intelligence, cloud computing, DevOps, and scalable web application development. I enjoy building real-world applications that combine modern frontend technologies, backend systems, cloud infrastructure, and machine learning.
+
+My career goal is to become a highly skilled software engineer and AI-focused full stack developer who can build scalable and impactful products. I am especially interested in full stack development, cloud infrastructure, automation, machine learning, DevOps practices, and real-time collaborative systems.
+
+I have hands-on experience with frontend technologies such as React.js, Next.js 14, Flutter, HTML5, CSS3, Tailwind CSS, and TypeScript. On the backend side, I work with Node.js, Express.js, Django REST Framework, REST APIs, authentication systems, Firebase Authentication, JWT, and Google OAuth.
+
+I also have experience with databases and cloud technologies including Firebase Firestore, Cloud Functions, MongoDB, SQLite, AWS EC2, AWS S3, Vercel deployment, Docker, Git, CI/CD pipelines, and Linux environments.
+
+In the field of artificial intelligence and machine learning, I have worked with TensorFlow, Scikit-learn, Pandas, OpenCV, and data preprocessing pipelines. I enjoy solving practical problems using machine learning and data-driven systems.
+
+I am proficient in programming languages such as Python, JavaScript, TypeScript, Java, C++, and Dart.
+
+One of my major projects is Spendy, a cross-platform expense splitting mobile application built using Flutter and Firebase. The application supports real-time Firestore synchronization, Google authentication, push notifications using Firebase Cloud Messaging, and interactive spending analytics. It also includes UPI deep-link integration for platforms like Google Pay, PhonePe, and Paytm to simplify expense settlement.
+
+Another major project I built is Collab Sheets, a real-time collaborative spreadsheet web application inspired by Google Sheets. It was developed using Next.js 14, TypeScript, Firebase, and Vercel. The platform supports multi-user live collaboration, presence indicators, real-time synchronization, custom spreadsheet formula logic, circular dependency detection, drag-to-resize features, keyboard shortcuts, and CSV/JSON export functionality.
+
+I also developed a Customer Churn Prediction System using Python, Scikit-learn, and Streamlit. The project used the Kaggle Telco dataset to predict customer churn using machine learning models. I implemented data preprocessing, feature engineering, class imbalance handling using SMOTE, and a Streamlit dashboard for predictions.
+
+Apart from projects, I have experience working as a Core Member in the Design Team of E-Cell VIT Bhopal. I contributed to frontend development and UI/UX design for the E-Summit 2025 website and worked on digital branding and deployment tasks.
+
+I also worked remotely as a Research Intern and SEO Designer at TheGeostrata, a geopolitics research platform based in New Delhi. My work included SEO optimization, content strategy, analytics tracking using Google Analytics and Search Console, and writing research-based articles related to geopolitics and international affairs.
+
+I have earned certifications from organizations like Google, Oracle, NPTEL IIT Ropar, and ETHNUS. Some of my certifications include Google IT Support Professional, Oracle Cloud AI Foundations, Oracle Generative AI Professional, MERN Full Stack Development, and Deep Learning by NPTEL IIT Ropar.
+
+I received the Wipro Earthian Award and also received a Letter of Recommendation from the Defense Minister of India.
+
+I enjoy learning modern technologies, building side projects, contributing to innovative ideas, and continuously improving my technical and problem-solving skills. I believe every project is an opportunity to learn something new and create meaningful impact.
+
+Outside of technology, I enjoy exploring geopolitics, strategy, design, writing, and emerging technology trends. I am also interested in creating visually appealing user experiences and intuitive digital products.
+
+I have strong adaptability and learning ability, and I am comfortable quickly learning new frameworks, tools, and technologies when required for projects or professional work. My experience across frontend, backend, cloud, AI, and DevOps gives me a strong foundation for full stack and modern software engineering roles.
+
+I am currently building hands-on projects to strengthen my practical skills in software engineering, cloud systems, AI applications, and scalable product development.
+
+I am open to opportunities in software engineering, full stack development, AI engineering, cloud engineering, DevOps, backend development, frontend engineering, and product-focused technology roles where I can contribute, learn, and grow as an engineer.

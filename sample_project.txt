@@ -1,0 +1,35 @@
+Project Name: SmartStudy AI
+
+SmartStudy AI is an AI-powered educational assistant designed to help students learn more efficiently using semantic search and personalized recommendations.
+
+The platform allows users to upload notes, PDFs, and study materials, then ask questions in natural language. The system retrieves relevant information using vector embeddings and generates contextual answers using large language models.
+
+Key Features:
+- Retrieval-Augmented Generation (RAG)
+- Semantic document search
+- AI-generated summaries
+- Personalized learning recommendations
+- Multi-document knowledge base
+- FastAPI backend
+- React frontend
+- ChromaDB vector database
+- Ollama local LLM integration
+
+Tech Stack:
+- Python
+- FastAPI
+- React.js
+- Tailwind CSS
+- ChromaDB
+- Ollama
+- Docker
+
+Future Improvements:
+- PDF upload support
+- User authentication
+- Cloud deployment on AWS
+- Kubernetes orchestration
+- Real-time collaborative notes
+- Voice-based AI assistant
+
+The project focuses on combining AI, cloud infrastructure, and scalable software engineering principles to improve the educational experience for students.
