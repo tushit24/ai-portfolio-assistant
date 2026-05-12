@@ -143,6 +143,23 @@ Description: Received a Letter of Recommendation from the Defense Minister of In
 
 experience = [
     {
+     "id": "exp_geostrata",
+        "text": """Experience: Research Intern and SEO Analyst
+Organization: TheGeostrata — New Delhi (Remote)
+Duration: April 2024 – October 2024
+Professional Experience Summary:
+Worked as a Research Intern and SEO Designer for a geopolitics and international affairs research platform.
+Type: Remote internship
+Responsibilities:
+- Designed and executed SEO strategy for a geopolitics research platform
+- Tracked organic performance using Google Analytics and Search Console
+- Authored research articles on geopolitics and international affairs
+- Managed content strategy and publication pipeline
+Skills Demonstrated:
+SEO, research writing, analytics, content strategy, digital branding, technical communication
+"""   
+    },
+    {
         "id": "exp_ecell_vit",
         "text": """Role: Core Member, Design Team
 Organization: E-Cell VIT Bhopal
@@ -151,18 +168,6 @@ Responsibilities:
 - Led frontend development and UI/UX design for the E-Summit 2025 website (1,000+ attendees)
 - Owned full deployment, post-launch iteration, and digital brand identity across channels
 - Worked on digital branding tasks and SEO optimization"""
-    },
-    {
-        "id": "exp_geostrata",
-        "text": """Role: Research Intern and SEO Designer
-Organization: TheGeostrata — New Delhi (Remote)
-Duration: April 2024 – October 2024
-Type: Remote internship
-Responsibilities:
-- Designed and executed SEO strategy for a geopolitics research platform
-- Tracked organic performance using Google Analytics and Search Console
-- Authored research articles on geopolitics and international affairs
-- Managed content strategy and publication pipeline"""
     },
 ]
 
