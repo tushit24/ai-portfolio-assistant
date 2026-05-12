@@ -1043,7 +1043,7 @@ function App() {
                   askQuestion();
                 }
               }}
-              placeholder="Ask about my projects, experience, AI systems, DevOps..."
+              placeholder="Ask about my projects, experience, techstack..."
               style={{
                 flex: 1,
                 background:
