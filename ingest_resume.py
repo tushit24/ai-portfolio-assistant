@@ -76,6 +76,33 @@ Key Features:
 - Live at: spreadsheet-app-ivory.vercel.app"""
     },
     {
+    "id": "proj_vr_table_tennis",
+    "text": """Project: Unity VR Table Tennis
+
+Type: Virtual Reality / Immersive Technology Project
+
+Priority: High
+
+Description:
+A Virtual Reality Table Tennis game developed using Unity that delivers an immersive ping-pong experience in a realistic indoor environment using VR motion controllers.
+
+Tech Stack:
+Unity, C#, Oculus SDK, Unity Physics Engine, VR Development Tools
+
+Key Features:
+- Fully immersive VR gameplay experience
+- Realistic table tennis physics and collision handling
+- AI-controlled opponent paddle
+- Real-time paddle movement using VR controllers
+- Indoor 3D game environment with lighting and textures
+- Interactive gameplay using motion-based controls
+
+Skills Demonstrated:
+Virtual Reality Development, Unity Game Development, C# Programming, Physics Simulation, Real-Time Interaction Systems, 3D Environment Design, Immersive UI/UX
+
+"""
+},
+    {
         "id": "proj_churn_prediction",
         "text": """Project: Customer Churn Prediction System
 Type: Machine Learning / Data Science Project
