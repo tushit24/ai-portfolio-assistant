@@ -442,6 +442,7 @@ function App() {
             style={{
               height: "100%",
               display: "grid",
+              overflow: "hidden",
               gridTemplateColumns:
                 isMobile
                   ? "1fr"
