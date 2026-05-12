@@ -142,7 +142,7 @@ def route_query(query: str):
         return ["certifications"]
 
     if any(k in q for k in exp_keywords):
-        return ["experience", "projects"]
+        return ["experience", "general"]
 
     if any(k in q for k in skill_keywords):
         return ["skills", "projects"]
@@ -404,6 +404,7 @@ IMPORTANT PRIORITY RULES:
 - Do not focus on only one project
 - Do not focus on only one role
 - Give balanced summaries
+- For experience questions, mention ALL relevant professional experiences and internships if available.
 
 ONLY return the final answer.
 """
