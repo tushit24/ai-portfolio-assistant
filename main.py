@@ -142,7 +142,7 @@ def route_query(query: str):
         return ["certifications"]
 
     if any(k in q for k in exp_keywords):
-        return ["experience", "general"]
+        return ["experience"]
 
     if any(k in q for k in skill_keywords):
         return ["skills", "projects"]
@@ -209,6 +209,10 @@ FOR JOB SUITABILITY QUESTIONS:
 
 ## Relevant Projects
 - project name: relevance
+
+## For experience questions:
+- ONLY discuss internships, leadership roles, organizational work, and professional experience
+- Do NOT include certifications, awards, or unrelated projects unless explicitly asked
 
 ## Overall Assessment
 - concise conclusion
