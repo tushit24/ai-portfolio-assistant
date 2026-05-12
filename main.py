@@ -56,50 +56,98 @@ COLLECTIONS = {
 # QUERY ROUTER
 # =========================
 
-def route_query(query: str) -> str:
+def route_query(query: str):
+
     q = query.lower()
+
+    summary_keywords = [
+        "summary",
+        "summarize",
+        "overview",
+        "about",
+        "profile",
+        "who is",
+        "tell me about",
+        "introduce",
+    ]
 
     project_keywords = [
         "sheets",
-"firebase",
-"realtime",
-"full stack","project", "built", "made", "created", "app",
-        "application", "website", "build", "developed",
-        "spendy", "collab", "churn", "flutter",
-        "nextjs", "next.js", "streamlit" , "app development"
+        "firebase",
+        "realtime",
+        "full stack",
+        "project",
+        "built",
+        "made",
+        "created",
+        "app",
+        "application",
+        "website",
+        "build",
+        "developed",
+        "spendy",
+        "collab",
+        "churn",
+        "flutter",
+        "nextjs",
+        "next.js",
+        "streamlit",
+        "app development",
     ]
 
     cert_keywords = [
-        "certif", "course", "nptel", "google",
-        "oracle", "credential", "award",
-        "recommendation"
+        "certif",
+        "course",
+        "nptel",
+        "google",
+        "oracle",
+        "credential",
+        "award",
+        "recommendation",
     ]
 
     exp_keywords = [
-        "experience", "intern", "work", "job",
-        "company", "role", "position",
-        "e-summit", "geostrata", "ecell", "e-cell"
+        "experience",
+        "intern",
+        "work",
+        "job",
+        "company",
+        "role",
+        "position",
+        "e-summit",
+        "geostrata",
+        "ecell",
+        "e-cell",
     ]
 
     skill_keywords = [
-        "skill", "language", "tech", "stack",
-        "framework", "technology", "technologies",
-        "tool", "proficient"
+        "skill",
+        "language",
+        "tech",
+        "stack",
+        "framework",
+        "technology",
+        "technologies",
+        "tool",
+        "proficient",
     ]
 
+    if any(k in q for k in summary_keywords):
+        return ["general", "projects", "experience", "skills"]
+
     if any(k in q for k in project_keywords):
-        return "projects"
+        return ["projects"]
 
     if any(k in q for k in cert_keywords):
-        return "certifications"
+        return ["certifications"]
 
     if any(k in q for k in exp_keywords):
-        return "experience"
+        return ["experience", "projects"]
 
     if any(k in q for k in skill_keywords):
-        return "skills"
+        return ["skills", "projects"]
 
-    return "general"
+    return ["general"]
 
 # =========================
 # SYSTEM PROMPT
@@ -218,15 +266,14 @@ async def chat(request: ChatRequest):
     # ROUTE QUERY
     # =========================
 
-    collection_key = route_query(query)
-    collection = COLLECTIONS[collection_key]
+    collection_keys = route_query(query)
 
     # =========================
     # QUERY CHROMA
     # =========================
 
     DISTANCE_THRESHOLD = 1.8
-    N_RESULTS = 6
+    N_RESULTS = 10
 
     def fetch_docs(col, n=N_RESULTS):
 
@@ -252,40 +299,43 @@ async def chat(request: ChatRequest):
         except Exception:
             return [], []
 
-    docs, dists = fetch_docs(collection)
-
     # =========================
-    # FILTER RESULTS
+    # MULTI COLLECTION RETRIEVAL
     # =========================
 
-    filtered = [
-        doc for doc, dist in zip(docs, dists)
-        if dist < DISTANCE_THRESHOLD
-    ]
+    all_filtered_docs = []
 
-    # =========================
-    # FALLBACK TO GENERAL
-    # =========================
+    for key in collection_keys:
 
-    if not filtered and collection_key != "general":
+        collection = COLLECTIONS[key]
 
-        fallback_docs, fallback_dists = fetch_docs(
-            COLLECTIONS["general"],
-            n=5
-        )
+        docs, dists = fetch_docs(collection)
 
         filtered = [
-            doc for doc, dist in zip(fallback_docs, fallback_dists)
+            doc for doc, dist in zip(docs, dists)
             if dist < DISTANCE_THRESHOLD
         ]
 
-    # =========================
-    # LAST RESORT
-    # =========================
+        # fallback to general
+        if not filtered:
+            fallback_docs, fallback_dists = fetch_docs(
+                COLLECTIONS["general"],
+                n=6
+            )
 
-    if not filtered:
-        all_docs, _ = fetch_docs(collection, n=N_RESULTS)
-        filtered = all_docs
+            filtered = [
+                doc for doc, dist in zip(fallback_docs, fallback_dists)
+                if dist < DISTANCE_THRESHOLD
+            ]
+
+        # last resort
+        if not filtered:
+            all_docs, _ = fetch_docs(collection, n=N_RESULTS)
+            filtered = all_docs
+
+        all_filtered_docs.extend(filtered)
+
+    filtered = all_filtered_docs
 
     # =========================
     # DEDUPLICATION
@@ -312,6 +362,10 @@ async def chat(request: ChatRequest):
             )
         }
 
+    # =========================
+    # CONTEXT
+    # =========================
+
     context = "\n\n".join(unique_docs)
 
     # =========================
@@ -327,19 +381,29 @@ QUESTION:
 
 STRICT INSTRUCTIONS:
 
-- Answer ONLY from the portfolio context
-- No hallucinations
-- No fake technologies
-- No fake projects
-- No HTML
-- No code snippets
-- Keep response concise
-- Keep response recruiter-friendly
+- Answer ONLY using the portfolio context
+- NEVER hallucinate
+- NEVER invent projects, roles, technologies, or companies
+- NEVER merge projects together
+- NEVER generate HTML or code snippets
+- Keep responses recruiter-friendly
 - Use markdown formatting
-- Use bullet points
+- Use headings and bullet points
 - Avoid repetition
 - Complete the response fully
 - Do not stop mid-sentence
+
+IMPORTANT PRIORITY RULES:
+
+- When summarizing Tushit's profile or projects, ALWAYS mention:
+  1. Spendy
+  2. Collab Sheets
+  3. Customer Churn Prediction System
+
+- Mention MULTIPLE experiences if available
+- Do not focus on only one project
+- Do not focus on only one role
+- Give balanced summaries
 
 ONLY return the final answer.
 """
@@ -361,7 +425,7 @@ ONLY return the final answer.
             }
         ],
         temperature=0,
-        max_tokens=500,
+        max_tokens=900,
     )
 
     answer = response.choices[0].message.content
