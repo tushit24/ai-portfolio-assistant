@@ -237,7 +237,8 @@ def root():
     return {
         "message": "Tushit AI Portfolio Assistant API Running"
     }
-    @app.get("/health")
+
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
