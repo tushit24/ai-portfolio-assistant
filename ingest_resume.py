@@ -1,291 +1,552 @@
-"""
-reingest_clean.py
------------------
-Drops and rebuilds ALL collections cleanly.
-Run this ONCE to fix the polluted resume_collection.
-
-Usage:
-    python reingest_clean.py
-"""
-
 import chromadb
+import uuid
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
+from pypdf import PdfReader
 
-client = chromadb.PersistentClient(path=CHROMA_PATH)
-
-# ── Drop all existing collections ────────────────────────────────────────────
-COLLECTION_NAMES = ["projects", "certifications", "experience", "skills", "resume_collection"]
-
-print("Dropping existing collections...")
-for name in COLLECTION_NAMES:
-    try:
-        client.delete_collection(name)
-        print(f"  ✓ Dropped: {name}")
-    except Exception:
-        print(f"  - Not found (skipping): {name}")
-
-# ── Helper ───────────────────────────────────────────────────────────────────
-
-def upsert(collection_name: str, docs: list[dict]):
-    col = client.get_or_create_collection(collection_name)
-    if docs:
-        col.upsert(
-            ids=[d["id"] for d in docs],
-            documents=[d["text"] for d in docs],
-        )
-    print(f"  ✓ {collection_name}: {len(docs)} chunks")
 
 # ============================================================
-# PROJECTS
+# PATHS
+# ============================================================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+CHROMA_PATH = os.path.join(
+    BASE_DIR,
+    "chroma_db"
+)
+
+RESUME_PATH = os.path.join(
+    BASE_DIR,
+    "Tushit_Tiwari_Resume.pdf"
+)
+
+
+# ============================================================
+# CHROMADB
+# ============================================================
+
+client = chromadb.PersistentClient(
+    path=CHROMA_PATH
+)
+
+
+# ============================================================
+# DELETE OLD COLLECTIONS
+# ============================================================
+
+COLLECTION_NAMES = [
+    "projects",
+    "certifications",
+    "experience",
+    "skills",
+    "resume_collection"
+]
+
+print("\nRemoving old knowledge base...\n")
+
+for name in COLLECTION_NAMES:
+
+    try:
+
+        client.delete_collection(name)
+
+        print(f"  ✓ Deleted: {name}")
+
+    except Exception:
+
+        print(f"  - {name} not found")
+
+
+# ============================================================
+# CREATE COLLECTIONS
+# ============================================================
+
+projects_collection = client.get_or_create_collection(
+    name="projects"
+)
+
+certifications_collection = client.get_or_create_collection(
+    name="certifications"
+)
+
+experience_collection = client.get_or_create_collection(
+    name="experience"
+)
+
+skills_collection = client.get_or_create_collection(
+    name="skills"
+)
+
+resume_collection = client.get_or_create_collection(
+    name="resume_collection"
+)
+
+
+# ============================================================
+# LOAD ACTUAL RESUME PDF
+# ============================================================
+
+print("\nLoading latest resume PDF...")
+
+if not os.path.exists(RESUME_PATH):
+
+    raise FileNotFoundError(
+        f"Resume not found at:\n{RESUME_PATH}"
+    )
+
+
+reader = PdfReader(RESUME_PATH)
+
+resume_text = ""
+
+for page_number, page in enumerate(reader.pages, start=1):
+
+    extracted = page.extract_text()
+
+    if extracted:
+
+        resume_text += (
+            f"\n--- Resume Page {page_number} ---\n"
+        )
+
+        resume_text += extracted
+
+
+print(
+    f"  ✓ Resume loaded successfully "
+    f"({len(reader.pages)} pages)"
+)
+
+print(
+    f"  ✓ Extracted {len(resume_text)} characters"
+)
+
+
+# ============================================================
+# SMART RESUME CHUNKING
+# ============================================================
+
+def split_text(
+    text,
+    chunk_size=1200,
+    overlap=150
+):
+
+    text = text.replace(
+        "\r",
+        "\n"
+    )
+
+    text = "\n".join(
+        line.strip()
+        for line in text.splitlines()
+        if line.strip()
+    )
+
+    chunks = []
+
+    start = 0
+
+    while start < len(text):
+
+        end = min(
+            start + chunk_size,
+            len(text)
+        )
+
+        chunk = text[start:end].strip()
+
+        if chunk:
+
+            chunks.append(chunk)
+
+        if end >= len(text):
+
+            break
+
+        start = end - overlap
+
+    return chunks
+
+
+resume_chunks = split_text(
+    resume_text
+)
+
+
+print(
+    f"  ✓ Created {len(resume_chunks)} resume chunks"
+)
+
+
+# ============================================================
+# STORE ACTUAL RESUME
+# ============================================================
+
+resume_collection.add(
+
+    ids=[
+        f"resume_{uuid.uuid4()}"
+        for _ in resume_chunks
+    ],
+
+    documents=resume_chunks,
+
+    metadatas=[
+        {
+            "source": "latest_resume_pdf",
+            "type": "resume",
+            "chunk_index": i
+        }
+
+        for i in range(len(resume_chunks))
+    ]
+)
+
+
+print(
+    f"  ✓ resume_collection: "
+    f"{len(resume_chunks)} chunks"
+)
+
+
+# ============================================================
+# STRUCTURED PROJECT DATA
 # ============================================================
 
 projects = [
-    {
-        "id": "proj_spendy",
-        "text": """Project: Spendy
-Type: Cross-platform Mobile Application
-Priority: Highest
-Production: Yes — Production APK released
-Description: A cross-platform expense splitting mobile application built using Flutter and Firebase.
-Tech Stack: Flutter, Dart, Firebase Firestore, Firebase Authentication, Firebase Cloud Messaging (FCM), Cloud Functions, fl_chart
-Key Features:
-- Architected real-time Firestore sync for live bill-splitting across devices
-- Google OAuth via Firebase Auth and FCM push notifications through Cloud Functions
-- Interactive spending analytics using fl_chart library
-- UPI deep-link integration pre-filling recipient ID and exact amount for one-tap debt settlement (Google Pay, PhonePe, Paytm)
-- Owned full deployment and production release lifecycle
--Can be dowloaded from "https://drive.google.com/drive/u/0/folders/1E8GOk3zyCwhcM57IgKx3zOEkpdQvFagL"""
-    },
-    {
-        "id": "proj_collab_sheets",
-        "text": """Project: Collab Sheets
-Type: Real-Time Collaborative Web Application
-Priority: Highest
-Live URL: spreadsheet-app-ivory.vercel.app
-Description: A multi-user Google Sheets-inspired collaborative spreadsheet web application.
-Tech Stack: Next.js 14 (App Router), TypeScript, Firebase Firestore, Vercel, GitHub CI/CD, react-window
-Key Features:
-- Live presence indicators and real-time Firestore synchronization for multi-user collaboration
-- Custom formula engine with dependency graph traversal and circular dependency detection
-- Optimized rendering using react-window grid virtualization
-- Drag-to-resize columns, Ctrl+B/I/U keyboard shortcuts, CSV and JSON export
-- Deployed on Vercel with GitHub CI/CD pipeline
-- Live at: spreadsheet-app-ivory.vercel.app"""
-    },
-    {
-    "id": "proj_vr_table_tennis",
-    "text": """Project: Unity VR Table Tennis
 
-Type: Virtual Reality / Immersive Technology Project
-
-Priority: High
-
-Description:
-A Virtual Reality Table Tennis game developed using Unity that delivers an immersive ping-pong experience in a realistic indoor environment using VR motion controllers.
+    """
+Project: AI Portfolio Assistant
 
 Tech Stack:
-Unity, C#, Oculus SDK, Unity Physics Engine, VR Development Tools
+React, FastAPI, ChromaDB, RAG, Groq LLM, Vercel, Render.
 
-Key Features:
-- Fully immersive VR gameplay experience
-- Realistic table tennis physics and collision handling
-- AI-controlled opponent paddle
-- Real-time paddle movement using VR controllers
-- Indoor 3D game environment with lighting and textures
-- Interactive gameplay using motion-based controls
+Description:
+A full-stack RAG-powered portfolio chatbot designed to answer
+questions about Tushit's education, skills, projects,
+certifications and professional experience.
 
-Skills Demonstrated:
-Virtual Reality Development, Unity Game Development, C# Programming, Physics Simulation, Real-Time Interaction Systems, 3D Environment Design, Immersive UI/UX
+The system uses ChromaDB for semantic retrieval and Groq API
+for LLM-based response generation.
+""",
 
+    """
+Project: Spendy
+
+Tech Stack:
+Flutter, Dart, Firebase Firestore, Firebase Authentication,
+Firebase Cloud Messaging, Cloud Functions, fl_chart.
+
+Description:
+A cross-platform expense splitting mobile application.
+
+Features:
+- Real-time Firestore synchronization
+- Google OAuth
+- Push notifications
+- Spending analytics
+- UPI deep linking
+- Google Pay
+- PhonePe
+- Paytm
+- Production release
+""",
+
+    """
+Project: Collab Sheets
+
+Tech Stack:
+Next.js 14, TypeScript, Firebase Firestore, Vercel,
+GitHub Actions, react-window.
+
+Description:
+A Google Sheets-inspired real-time collaborative spreadsheet
+application.
+
+Features:
+- Multi-user editing
+- Live presence
+- Firestore synchronization
+- Custom formula engine
+- Dependency graph
+- Circular dependency detection
+- Cell virtualization
+- CSV/JSON export
+- Keyboard shortcuts
+- Vercel deployment
+- GitHub CI/CD
+""",
+
+    """
+Project: VR Table Tennis Game
+
+Tech Stack:
+Unity, C#, SteamVR, OpenXR, Physics Engine.
+
+Description:
+An immersive virtual reality table tennis game with
+realistic physics and an AI-controlled opponent.
+
+Features:
+- VR interaction
+- Real-time physics
+- Collision detection
+- Finite State Machine AI
+- Three difficulty levels
+- SteamVR/OpenXR
 """
-},
-    {
-        "id": "proj_churn_prediction",
-        "text": """Project: Customer Churn Prediction System
-Type: Machine Learning / Data Science Project
-Description: An end-to-end machine learning pipeline to predict customer churn using the Kaggle Telco dataset.
-Tech Stack: Python, Scikit-learn, SMOTE (imbalanced-learn), Pandas, Streamlit
-Key Features:
-- Built on Kaggle Telco dataset with 7,043 records
-- Applied SMOTE to handle class imbalance in churn data
-- Feature engineering from contract and billing data
-- Deployed a Streamlit dashboard supporting bulk CSV prediction uploads"""
-    },
 ]
 
-# ============================================================
-# CERTIFICATIONS & HONORS
-# ============================================================
 
-certifications = [
-    {
-        "id": "cert_google_it",
-        "text": """Certification: Google IT Support Professional
-Issuer: Google
-Description: Covers IT support fundamentals, networking, operating systems, system administration, and troubleshooting."""
-    },
-    {
-        "id": "cert_oracle_ai_foundations",
-        "text": """Certification: Oracle Cloud AI Foundations
-Issuer: Oracle
-Description: Demonstrates understanding of AI fundamentals and cloud computing on Oracle Cloud Infrastructure."""
-    },
-    {
-        "id": "cert_oracle_genai",
-        "text": """Certification: Oracle Generative AI Professional
-Issuer: Oracle
-Description: Professional-level certification covering generative AI concepts, large language models, and Oracle AI services."""
-    },
-    {
-        "id": "cert_mern",
-        "text": """Certification: MERN Full Stack Development
-Issuer: ETHNUS
-Description: Full stack development using MongoDB, Express.js, React.js, and Node.js."""
-    },
-    {
-        "id": "cert_deep_learning",
-        "text": """Certification: Deep Learning
-Issuer: NPTEL, IIT Ropar
-Description: Completed NPTEL deep learning course covering neural networks, CNNs, and modern machine learning techniques."""
-    },
-    {
-        "id": "honor_wipro_earthian",
-        "text": """Honor / Award: Wipro Earthian Award
-Issuer: Wipro
-Description: Received the Wipro Earthian Award recognizing innovation and sustainability-focused thinking."""
-    },
-    {
-        "id": "honor_defense_minister_lor",
-        "text": """Honor: Letter of Recommendation from the Defense Minister of India
-Description: Received a Letter of Recommendation from the Defense Minister of India, recognizing achievements and contributions."""
-    },
-]
+projects_collection.add(
+
+    ids=[
+        f"project_{uuid.uuid4()}"
+        for _ in projects
+    ],
+
+    documents=projects,
+
+    metadatas=[
+        {
+            "source": "structured_portfolio",
+            "type": "project",
+            "project_index": i
+        }
+
+        for i in range(len(projects))
+    ]
+)
+
+
+print(
+    f"  ✓ projects: {len(projects)} documents"
+)
+
 
 # ============================================================
 # EXPERIENCE
 # ============================================================
 
 experience = [
-    {
-     "id": "exp_geostrata",
-        "text": """Experience: Research Intern and SEO Analyst
-Organization: TheGeostrata — New Delhi (Remote)
-Duration: April 2024 – October 2024
-Professional Experience Summary:
-Worked as a Research Intern and SEO Designer for a geopolitics and international affairs research platform.
-Type: Remote internship
-Responsibilities:
-- Designed and executed SEO strategy for a geopolitics research platform
-- Tracked organic performance using Google Analytics and Search Console
-- Authored research articles on geopolitics and international affairs
-- Managed content strategy and publication pipeline
-Skills Demonstrated:
-SEO, research writing, analytics, content strategy, digital branding, technical communication
-"""   
-    },
-    {
-        "id": "exp_ecell_vit",
-        "text": """Role: Core Member, Design Team
-Organization: E-Cell VIT Bhopal
-Duration: January 2025 – Present
-Responsibilities:
-- Led frontend development and UI/UX design for the E-Summit 2025 website (1,000+ attendees)
-- Owned full deployment, post-launch iteration, and digital brand identity across channels
-- Worked on digital branding tasks and SEO optimization"""
-    },
+
+    """
+Experience:
+MERN Stack Intern — AI & Full Stack
+
+Organization:
+Vicharanashala Lab for Education Design (VLED), IIT Ropar.
+
+Work:
+Full-stack development, AI integration, REST APIs,
+RAG-based AI modules and educational technology platforms.
+""",
+
+    """
+Experience:
+Research Intern & SEO Strategist
+
+Organization:
+TheGeostrata, New Delhi.
+
+Work:
+SEO strategy, Google Analytics, Google Search Console,
+research writing, content strategy and digital growth.
+""",
+
+    """
+Experience:
+Core Member — Design Team
+
+Organization:
+E-Cell VIT Bhopal University.
+
+Work:
+Marketing creatives, pitch decks, event branding,
+UI/UX and digital design for entrepreneurship events.
+"""
 ]
+
+
+experience_collection.add(
+
+    ids=[
+        f"experience_{uuid.uuid4()}"
+        for _ in experience
+    ],
+
+    documents=experience,
+
+    metadatas=[
+        {
+            "source": "structured_portfolio",
+            "type": "experience",
+            "experience_index": i
+        }
+
+        for i in range(len(experience))
+    ]
+)
+
+
+print(
+    f"  ✓ experience: {len(experience)} documents"
+)
+
+
+# ============================================================
+# CERTIFICATIONS
+# ============================================================
+
+certifications = [
+
+    "AWS Certified Cloud Practitioner (CLF-C02)",
+
+    "Google IT Support Professional Certificate",
+
+    "MERN Full Stack Development — ETHNUS",
+
+    "Deep Learning — NPTEL IIT Ropar",
+
+    "Oracle Cloud AI Foundations",
+
+    "Oracle Generative AI Professional",
+
+    "Wipro Earthian Award",
+
+    "Letter of Recommendation from the Defense Minister of India"
+]
+
+
+certifications_collection.add(
+
+    ids=[
+        f"cert_{uuid.uuid4()}"
+        for _ in certifications
+    ],
+
+    documents=certifications,
+
+    metadatas=[
+        {
+            "source": "structured_portfolio",
+            "type": "certification",
+            "certification_index": i
+        }
+
+        for i in range(len(certifications))
+    ]
+)
+
+
+print(
+    f"  ✓ certifications: "
+    f"{len(certifications)} documents"
+)
+
 
 # ============================================================
 # SKILLS
 # ============================================================
 
 skills = [
-    {
-        "id": "skills_languages",
-        "text": """Programming Languages:
-Python, JavaScript, TypeScript, Java, C++, Dart"""
-    },
-    {
-        "id": "skills_frontend",
-        "text": """Frontend Technologies:
-React.js, Next.js 14 (App Router), Flutter, HTML5, CSS3, Tailwind CSS, TypeScript"""
-    },
-    {
-        "id": "skills_backend",
-        "text": """Backend Technologies:
-Node.js, Express.js, Django REST Framework, REST API Design,
-Authentication and Authorization: Firebase Auth, JWT, Google OAuth"""
-    },
-    {
-        "id": "skills_db_cloud",
-        "text": """Databases and Cloud:
-Firebase Firestore, Firebase Cloud Functions, Firebase Cloud Messaging (FCM),
-MongoDB, SQLite, AWS EC2, AWS S3, Vercel deployment"""
-    },
-    {
-        "id": "skills_devops",
-        "text": """DevOps and Tools:
-Docker, Git, GitHub, CI/CD pipelines, Linux environments, GitHub Actions"""
-    },
-    {
-        "id": "skills_ai_ml",
-        "text": """AI and Machine Learning:
-TensorFlow, Scikit-learn, Pandas, OpenCV, SMOTE (imbalanced-learn),
-data preprocessing pipelines, feature engineering, Streamlit"""
-    },
+
+    """
+Frontend:
+React.js, Next.js 14, Flutter, HTML5, CSS3,
+Tailwind CSS, Framer Motion.
+""",
+
+    """
+Backend:
+Node.js, Express.js, FastAPI, Django REST Framework,
+REST API Design, Authentication, Authorization,
+JWT, Google OAuth.
+""",
+
+    """
+Databases and AI:
+Firebase, MongoDB, MySQL, SQLite, AWS DynamoDB,
+ChromaDB, TensorFlow, Scikit-learn, Pandas,
+OpenCV, RAG, Vector Embeddings.
+""",
+
+    """
+Cloud and DevOps:
+AWS EC2, AWS S3, AWS DynamoDB, AWS IAM,
+Docker, Git, CI/CD, Vercel, Render.
+""",
+
+    """
+Programming Languages:
+Java, C++, Python, JavaScript, TypeScript, Dart.
+""",
+
+    """
+Other:
+Unity Engine, REST APIs, real-time systems,
+cloud infrastructure and deployment.
+"""
 ]
 
+
+skills_collection.add(
+
+    ids=[
+        f"skill_{uuid.uuid4()}"
+        for _ in skills
+    ],
+
+    documents=skills,
+
+    metadatas=[
+        {
+            "source": "structured_portfolio",
+            "type": "skill",
+            "skill_index": i
+        }
+
+        for i in range(len(skills))
+    ]
+)
+
+
+print(
+    f"  ✓ skills: {len(skills)} documents"
+)
+
+
 # ============================================================
-# GENERAL / BIO  — structured only, NO prose from profile.txt
+# FINAL SUMMARY
 # ============================================================
 
-general = [
-    {
-        "id": "bio_tushit",
-        "text": """Name: Tushit Tiwari
-Contact: +91-9555672098 | rishitiwariofficial@gmail.com
-Education: B.Tech, Computer Science and Engineering — Specialization: E-Commerce Technology
-University: VIT Bhopal University
-Duration: August 2023 – May 2027
-Year: Third year (2023–2027)
-CGPA: 8.0 / 10
-School: City Montessori School, Lucknow — High School: 93.8%, Intermediate: 86.25%
+print("\n==============================================")
+print("KNOWLEDGE BASE BUILT SUCCESSFULLY")
+print("==============================================")
 
-Summary:
-Full Stack Software Engineer (in training) with production experience building and deploying
-scalable web and mobile applications using React, Next.js, Node.js, Flutter, and Firebase.
-Skilled in REST API design, real-time systems, authentication, state management, and
-end-to-end deployment on AWS and Vercel. Certified by Google, Oracle, and NPTEL IIT Ropar.
+print(
+    f"Projects:        {projects_collection.count()}"
+)
 
-Career Goals:
-Aiming to become a highly skilled software engineer and AI-focused full stack developer
-building scalable and impactful products. Interested in full stack development,
-cloud infrastructure, automation, machine learning, DevOps, and real-time collaborative systems.
-Open to opportunities in software engineering, full stack development, AI engineering,
-cloud engineering, DevOps, backend development, frontend engineering, and product-focused roles.
+print(
+    f"Certifications:  {certifications_collection.count()}"
+)
 
-Background:
-Currently a student and early-career developer. Experience comes from academic projects,
-internships, self-learning, research work, and hands-on personal development projects.
+print(
+    f"Experience:      {experience_collection.count()}"
+)
 
-Interests outside tech:
-Geopolitics, strategy, design, writing, and emerging technology trends."""
-    },
-]
+print(
+    f"Skills:          {skills_collection.count()}"
+)
 
-# ── Run ingestion ─────────────────────────────────────────────────────────────
+print(
+    f"Resume PDF:      {resume_collection.count()} chunks"
+)
 
-if __name__ == "__main__":
-    print("\nIngesting clean resume data into ChromaDB...")
-    upsert("projects",          projects)           # 3  docs
-    upsert("certifications",    certifications)     # 7  docs
-    upsert("experience",        experience)         # 2  docs
-    upsert("skills",            skills)             # 6  docs
-    upsert("resume_collection", general + projects + certifications + experience + skills)  # 19 docs
+print("\nResume source:")
+print("  Tushit_Tiwari_Resume.pdf")
 
-    print("\nDone! Expected counts:")
-    print("  projects: 3 | certifications: 7 | experience: 2 | skills: 6 | general: 19")
-    print("\nNow restart uvicorn and hit /debug to verify.")
+print("\nThe latest PDF is now the source of truth for resume data.")
