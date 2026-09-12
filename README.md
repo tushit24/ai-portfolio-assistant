@@ -15,9 +15,9 @@ using a Retrieval-Augmented Generation (RAG) pipeline grounded on portfolio and 
 
 ---
 
-# 🌐 Live Demo
+# 🌐 Live 
 
-🔗 https://ai-portfolio-assistant-eight.vercel.app/
+🔗 https://tushittiwari.in/
 
 ---
 
