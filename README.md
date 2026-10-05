@@ -68,7 +68,7 @@ This improves retrieval relevance and response quality.
 ## ⚡ Fast AI Inference
 Powered using:
 - Groq API
-- Llama 3.1 8B Instant
+- openai/gpt-oss-120b
 
 for ultra-fast low-latency AI responses.
 
